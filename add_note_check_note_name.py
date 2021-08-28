@@ -3,7 +3,7 @@ import re
 
 
 #Нужно прописать путь к file_name с заметками
-file_name = None
+file_name = 'test.json'
 
 
 def add_note(file_name):
@@ -16,6 +16,8 @@ def add_note(file_name):
     new_note_tags = input('Введите один или несколько тегов заметки: ')
     #Сплитим все заметки в список
     tags = re.split(r'[ ,]+', new_note_tags)
+    for tag in tags:
+        tags[tags.index(tag)] = '#'+tag
     new_note_text = input('Ваша заметка: ')
     created_note = {'name': new_note, 'tag': tags, 'text': new_note_text}
     decoded_data.append(created_note)
