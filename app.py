@@ -1,9 +1,25 @@
+import logging
+
+# Config logging
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG, datefmt='%d.%m.%Y %H:%M:%S')
+
+# Init logger
+logger = logging.getLogger()
+
+
+def handle_info(func):
+    def inner(*args):
+        result = func(*args)
+        logger.info(result)
+        return result
+    return inner
 
 
 def exit_handler():
     return
 
 
+@handle_info
 def unknown_cmd():
     return "Unknown command"
 
