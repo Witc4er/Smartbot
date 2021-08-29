@@ -7,9 +7,12 @@ file_name = 'test.json'
 
 
 def add_note(file_name):
-    #Сохраняем инфу из файла в переменную decoded_data
-    with open(file_name, 'r') as fh:
-        decoded_data = json.load(fh)
+    #Сохраняем инфу из файла в переменную decoded_data. Если файла нет - создаем список decoded_data, который в последствии сериализуем в json.
+    try:
+        with open(file_name, 'r') as fh:
+            decoded_data = json.load(fh)
+    except json.decoder.JSONDecodeError:
+        decoded_data = []
     new_note = input('Введите имя заметки: ')
     #Проверяем, есть ли заметка с таким заголовком в базе
     check_note_name(decoded_data, new_note)
