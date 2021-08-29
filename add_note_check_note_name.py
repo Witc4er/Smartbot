@@ -11,7 +11,7 @@ def add_note(file_name):
     try:
         with open(file_name, 'r') as fh:
             decoded_data = json.load(fh)
-    except json.decoder.JSONDecodeError:
+    except (json.decoder.JSONDecodeError, FileNotFoundError):
         decoded_data = []
     new_note = input('Введите имя заметки: ')
     #Проверяем, есть ли заметка с таким заголовком в базе
@@ -39,5 +39,3 @@ def check_note_name(note_data, input_note_name):
             #Если юзер выбирает создать заметку - перезапускаем ф-цию add_note сначала
             elif check1 == 'add_note':
                 add_note(file_name)
-
-add_note(file_name)
