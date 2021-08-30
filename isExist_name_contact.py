@@ -6,7 +6,6 @@ file_name = 'test.json'
 
 
 def isExist_name_contact(contact_name):
-
     try:
         is_found = True
     
@@ -34,4 +33,4 @@ def isExist_name_contact(contact_name):
            
 
 if __name__ == "__main__":
-    isExist_name_contact()
+    isExist_name_contact('Vlad')

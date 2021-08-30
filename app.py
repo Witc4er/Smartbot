@@ -1,4 +1,5 @@
 import logging
+from address_book import add_contact
 
 # Config logging
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG, datefmt='%d.%m.%Y %H:%M:%S')
@@ -24,7 +25,7 @@ def unknown_cmd():
     return "Unknown command"
 
 
-COMMAND = {'add_contact': '',
+COMMAND = {'add_contact': add_contact,
            'delete_contact': '',
            'change_contact': '',
            'search_contact': '',
