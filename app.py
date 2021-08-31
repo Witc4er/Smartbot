@@ -1,5 +1,8 @@
 import logging
-from address_book import add_contact, delete_contact
+import json
+from clean import main
+from address_book import add_contact, delete_contact, CONTACTS, dump_note, show_contacts, show_birthday
+
 
 # Config logging
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG, datefmt='%d.%m.%Y %H:%M:%S')
@@ -16,7 +19,15 @@ def handle_info(func):
     return inner
 
 
+def sort_folder():
+    path = input('Укажите папку для сортировки: ')
+    main(path)
+    return f'Сортировка окончена.'
+
+
 def exit_handler():
+    print(CONTACTS)
+    dump_note(CONTACTS)
     return
 
 
@@ -29,17 +40,19 @@ COMMAND = {'add_contact': add_contact,
            'delete_contact': delete_contact,
            'change_contact': '',
            'search_contact': '',
-           'show_contacts': '',
-           'show_birthday': '',
+           'show_contacts': show_contacts,
+           'show_birthday': show_birthday,
            'add_note': '',
            'delete_note': '',
            'change_note': '',
            'search_note': '',
            'show_notes': '',
+           'sort_folder': sort_folder,
            'exit': exit_handler}
 
 
 def main():
+    print(f'Список команд: {[i for i in COMMAND.keys()]}')
     while True:
         user_input = input('Input your command: ')
         command = user_input.lower()
