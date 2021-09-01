@@ -1,7 +1,7 @@
 import logging
 import json
 from clean import main
-from address_book import add_contact, delete_contact, CONTACTS, dump_note, show_contacts, show_birthday
+from address_book import add_contact, delete_contact, CONTACTS, dump_note, show_contacts, show_birthdays
 
 
 # Config logging
@@ -33,7 +33,7 @@ def exit_handler():
 
 @handle_info
 def unknown_cmd():
-    return "Unknown command"
+    return "Unknown command."
 
 
 COMMAND = {'add_contact': add_contact,
@@ -41,7 +41,7 @@ COMMAND = {'add_contact': add_contact,
            'change_contact': '',
            'search_contact': '',
            'show_contacts': show_contacts,
-           'show_birthday': show_birthday,
+           'show_birthdays': show_birthdays,
            'add_note': '',
            'delete_note': '',
            'change_note': '',

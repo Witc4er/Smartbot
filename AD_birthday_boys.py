@@ -15,7 +15,7 @@ def birthday_boys(file_name):
         #Парсим список по записям
         try:
             for contact in contacts:
-            #формируем новую дату др с актуальным годом
+            # формируем новую дату др с актуальным годом
                 new_bd_day = datetime.strptime(contact['birthday'], '%d.%m.%Y').day
                 new_bd_month = datetime.strptime(contact['birthday'], '%d.%m.%Y').month
                 new_bd = date(year=current_date.year, month=new_bd_month, day=new_bd_day)

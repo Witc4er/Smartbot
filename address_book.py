@@ -2,17 +2,20 @@
 import re
 import json
 import os
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
+WEEKDAYS = ("\nMonday", "\nTuesday", "\nWednesday", "\nThursday", "\nFriday")
 FILE_NAME = 'test.json'
 
 
 def dump_note(new_data):
+    # Функция записи данных в файл
     with open(FILE_NAME, 'w') as fh:
         json.dump(new_data, fh)
 
 
 def load_note(path_file):
+    # Функция чтения данных из файла
     try:
         with open(path_file, 'r') as fh:
             return json.load(fh)
@@ -60,7 +63,7 @@ def sanitize_n_check_phone(phone):
 def input_phone():
     # Дает возможность ввести телефон и проверяет его валидность.
     # Если невалиден - ввод еще раз, Если валиден - возвращает валидный телефон
-    phone = input("Введите телефон: ")
+    phone = input("Введите телефон.\n>>> ")
     if not sanitize_n_check_phone(phone):
         print("Вы ввели некоректный телефон.\nПопробуйте еще раз ;)")
         return input_phone()
@@ -162,7 +165,7 @@ def wanna_enter_birthday():
             return wanna_enter_birthday()
 
 
-def add_contact():
+def add_contact() -> str:
     # Собранная функция добавления контакта
     # Не принимает аргументов, возвращает словарь с проверенными значениями имени, телефона (телефонов),
     # и по желанию - почта и день рождения
@@ -177,11 +180,12 @@ def add_contact():
            f'Имя: {result["name"]}\n' \
            f'Дата рождения: {result["birthday"]}\n' \
            f'Адрес проживания: {result["address"]}\n' \
-           f'Номер телефона: {",".join(result["phones"])}\n' \
+           f'Номер телефона: {", ".join(result["phones"])}\n' \
            f'Email: {result["email"]}\n'
 
 
-def delete_contact():
+def delete_contact() -> str:
+    # Функция удаления контакта
     contact_name = input("Введите имя контакта для удаления: ")
     for contact in CONTACTS:
         if contact_name == contact['name']:
@@ -190,11 +194,17 @@ def delete_contact():
         return f'Контакт с именем: {contact_name}, в списке не найден'
 
 
-def show_contacts():
+def show_contacts() -> str:
     result = ''
     for contact in CONTACTS:
         for k, v in contact.items():
-            result += f'{v}\n'
+            if not isinstance(v, list):
+                result += f'{v}\n'
+            else:
+                if len(v) != 1:
+                    result += f'{", ".join(v)}\n'
+                else:
+                    result += f'{v[0]}\n'
         result += '\n'
     return result
 
@@ -226,25 +236,45 @@ def is_exist_name_contact(contact_name):
         print("File not found")
 
 
-def show_birthday():
-    cnt = 0
+def close_birthday_users(users, start, end) -> list:
+    # Функция выборки ближайших дней рождения
+    now = datetime.today().date()
+    result = []
+    for user in users:
+        try:
+            birthday = datetime.strptime(user['birthday'], '%d.%m.%Y').date()
+            birthday = birthday.replace(year=now.year)
+        except TypeError:
+            continue
+        if start <= birthday <= end:
+            result.append(user)
+    return result
+
+
+def show_birthdays(contacts=CONTACTS) -> str:
+    # Функция выводы ближайших дней рождения контактов
     result = ''
-    current_date = date.today()
-    # Парсим список по записям
-    try:
-        for contact in CONTACTS:
-        # Формируем новую дату др с актуальным годом
-            new_bd_day = datetime.strptime(contact['birthday'], '%d.%m.%Y').day
-            new_bd_month = datetime.strptime(contact['birthday'], '%d.%m.%Y').month
-            new_bd = date(year=current_date.year, month=new_bd_month, day=new_bd_day)
-            # считаем дельту между др и сегодня
-            delta = new_bd - current_date
-            # если дельта меньше 7 - отображаем в консоль имя: дата
-            if delta.days < 7:
-                result += f"{contact['name']}: {contact['birthday']}\n\n"
-                return result
-                cnt += 1
-        if cnt == 0:
-            print('В ближайшие 7 дней именинников нет.')
-    except KeyError:
-        print('В записной книге пока ещё нет контактов с указанными датами рождения.')
+    now = datetime.today().date()
+    current_week_day = now.weekday()
+    if current_week_day >= 5:
+        start_date = now - timedelta(days=(7 - current_week_day))
+    elif current_week_day == 0:
+        start_date = now - timedelta(days=2)
+    else:
+        start_date = now
+    days_ahead = 4 - current_week_day
+    if days_ahead < 0:
+        days_ahead += 7
+    end_date = now + timedelta(days=days_ahead)
+    birthday_users = close_birthday_users(contacts, start=start_date, end=end_date)
+    for birthday in birthday_users:
+        for k, v in birthday.items():
+            if not isinstance(v, list):
+                result += f'{v}\n'
+            else:
+                if len(v) != 1:
+                    result += f'{", ".join(v)}\n'
+                else:
+                    result += f'{v[0]}\n'
+        result += '\n'
+    return result
