@@ -1,22 +1,24 @@
 from fuzzywuzzy import fuzz
-
+from app import COMMAND
 
 def command_analyzer():
-    input_command = input("Введите команду: ")
-    main_commands = [
-                     "add_contact", "delete_contact", "change_contact", "search_contact", "show_contacts", 
-                     "show_birthday", "add_note", "delete_note", "change_note", "search_note", "show_notes"
-                    ]
-    
-    for command in main_commands:
-        if 70 < fuzz.ratio(command, input_command) < 100:
-            print(f"Похоже, вы имели ввиду {command}")
-            return command
-        elif fuzz.ratio(command, input_command) == 100:
-            return command
+    while True:
+        input_command = input("Введите команду: ")
+        possible_cmd = []
+        for key, value in COMMAND.items():
+            if 70 < fuzz.ratio(key, input_command) < 100:
+                print(f"Похоже, вы имели ввиду {value}")
+                return value
+            elif fuzz.ratio(key, input_command) == 100:
+                return value
+            elif 40 <= fuzz.ratio(key, input_command) <= 70:
+                possible_cmd.append(key)
 
-    print("Простите, команда не распознана. Повторите попытку.")
-    command_analyzer()
+        if len(possible_cmd) > 0:   
+            pos_cmd = ", ".join(possible_cmd)
+            print(f"К сожалению, команда не распознана. Вероятно, вы имели ввиду что-то из этого: {pos_cmd}")
+        else:
+            print(f"Простите, команда {input_command} - не распознана. Повторите попытку")
 
 command_analyzer()
 
