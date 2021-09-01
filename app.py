@@ -29,8 +29,8 @@ def sort_folder():
 
 def exit_handler():
     print(CONTACTS)
+    print('Bye!')
     dump_note(CONTACTS)
-    return
 
 
 @handle_info
@@ -61,7 +61,7 @@ def main():
         handler = COMMAND.get(command.lower(), unknown_cmd)
         result = handler()
         if not result:
-            print('Bye!')
+            exit_handler()
             break
         print(result)
 

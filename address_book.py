@@ -129,7 +129,7 @@ def wanna_enter_email():
     # попробовать заново.
 
     answer = input("Введите Email человека и нажмите 'Enter'.\n"
-                   "Что бы пропустить - нажмите 'Enter'.\n>>> ")
+                   "Чтобы пропустить - нажмите 'Enter'.\n>>> ")
     if answer == "":
         return None
     else:
@@ -200,12 +200,12 @@ def show_contacts() -> str:
     for contact in CONTACTS:
         for k, v in contact.items():
             if not isinstance(v, list):
-                result += f'{v}\n'
+                result += f'{k.title()}: {v}\n'
             else:
                 if len(v) != 1:
-                    result += f'{", ".join(v)}\n'
+                    result += f'{k.title()}: {", ".join(v)}\n'
                 else:
-                    result += f'{v[0]}\n'
+                    result += f'{k.title()}: {v[0]}\n'
         result += '\n'
     return result
 
@@ -301,19 +301,28 @@ def search_contact():
 
 
 # # 2. Если запись не найдена - можно, ввести еще раз или отменить выполнение функции.
-# def search_contact_cycle(unpacked_contacts):
+# def search_contact_cycle():
 #     # Функциия принимает распакованный список контактов и возвращает искомый контакт (по ключу "name") или None, если человек выбрал прекратить поиск.
 #     while True:
-#         search_for_name = input("Введите имя контакта для изменения и Enter, чтобы прекратить нажмите только Enter: ")
+#         search_for_name = str(input("Введите имя контакта , чтобы прекратить нажмите только Enter: "))
 #         pos_in_list = 0
 #         if search_for_name == "":
 #             return
-#         for contact in unpacked_contacts:
+#         for contact in CONTACTS:
 #             if contact["name"] == search_for_name:
-#                 return [contact, pos_in_list]
+#                 return [contact]
 #             pos_in_list += 1
 #         print("Контакт с таким именем не найден.")
 
+
+def wanna_change_smth_else():
+    """Вложенная функция запроса на измениня каких-либо других полей"""
+    answer = str(input("Изменения внесены. Если Хотите изменить что-то еще - введите любой символ и "
+                       "нажмите 'Enter', чтобы выйти - просто нажмите 'Enter'.\n>>> "))
+    if not answer:
+        return 'ok'
+    else:
+        return change_contact()
 
 # 3. Пользователю выводиться все поля контакта, и спрашиваеться, которое он хочет изменить.
 # 4. Вызываеться функция изменения данного параметра
@@ -326,25 +335,23 @@ def change_contact():
     # печатает поля контакта, и спрашивает, который нужно изменить.
 
     count = 0  # Эта часть кода отображает содержание контакта с нумерацией полей словаря
-    name_for_search = str(input("Введите имя.\n>>> "))
-    old_contact = None
+    name_for_search = str(input("Введите имя.\n>>> ")).strip()
     for contact in CONTACTS:
         # Проверка на предмет наличия контакта в списке контактов
         if contact["name"] == name_for_search:
-            old_contact = contact
             # Вывод перечня полей для контакта
             for key, value in contact.items():
                 count += 1
                 print(f"{count}. {key.title()}: {value}")
             #  Просьба ввести номер параметра, который нужно изменить, с последующим изменением
-            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter',"
-                                   " либо просто 'Enter' - что бы отменить редактирование.\n>>> ")
+            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter',\n"
+                                   "чтобы выйти - просто нажмите 'Enter'.\n>>> ")
             if i_wanna_change == "1":
                 contact["name"] = input("Введите новое имя контакта.\n>>> ")
             elif i_wanna_change == "2":
                 contact["birthday"] = wanna_enter_birthday()
             elif i_wanna_change == "3":
-                contact["email"] = wanna_enter_email()
+                contact["address"] = str(input("Введите новый адресс контакта.\n>>> "))
             elif i_wanna_change == "4":
                 def wanna_add_or_change_phone():
                     """Вложенная функция изменения телефона контакта"""
@@ -355,26 +362,19 @@ def change_contact():
                         count_phone += 1
                         print(f"{count_phone}. {phones}")
                     answer = input(
-                        "Если хотите добавить новый телефон - введите его,"
-                        "если же хотите изменить существующий - введите его порядковый номер.\n>>> ")
+                        "Если хотите добавить новый телефон - просто введите его,"
+                        "если же хотите изменить существующий - введите его порядковый номер,"
+                        "после чего укажите новый мобильный телефон.\n>>> ")
                     if len(answer) <= 2:  # проверка что ввел порядковый номер
-                        contact["phones"][
-                            int(answer) - 1] = input_phone()  # Заменяет телефон в списке
+                        contact["phones"][int(answer) - 1] = input_phone()  # Заменяет телефон в списке
                     else:
-                        contact["phones"].append(
-                            input_phone)  # если ввел не порядковый номер, то предполагаем, телефон.
+                        contact["phones"].append(input_phone)  # если ввел не порядковый номер, то предполагаем, телефо
                     return contact["phones"]
+
                 contact["phones"] = wanna_add_or_change_phone()
             elif i_wanna_change == "5":
-                contact["address"] = str(input("Введите новый адресс контакта.\n>>> "))
+                contact["email"] = wanna_enter_email()
             elif i_wanna_change == "":
                 return "Вы завершили редактирование контакта. Никаких изменений не произошло."
 
-            def wanna_change_smth_else():
-                """Вложенная функция запроса на измениня каких-либо других полей"""
-                answer = str(input("Изменения внесены. Если Хотите изменить что-то еще - введите любой символ и"
-                                   "нажмите 'Enter', чтобы выйти - просто нажмите 'Enter'."))
-                if answer:
-                    return change_contact()
-            wanna_change_smth_else()
-    return f'Контакт с именем: {name_for_search}, отсутствует в записной книжке.'
+        # return f'Контакт с именем: {name_for_search}, отсутствует в записной книжке.'
