@@ -195,6 +195,7 @@ def delete_contact() -> str:
 
 
 def show_contacts() -> str:
+    # Функция вывода всех контактов
     result = ''
     for contact in CONTACTS:
         for k, v in contact.items():
@@ -209,31 +210,31 @@ def show_contacts() -> str:
     return result
 
 
-def is_exist_name_contact(contact_name):
-    try:
-        is_found = True
+# def is_exist_name_contact(contact_name):
+#     try:
+#         is_found = True
+#
+#         if os.stat(FILE_NAME).st_size == 0:  # Проверяем пустой список или нет
+#             return print('empty')
+#         load_data = load_note(FILE_NAME)
+#
+#         for contact in load_data:
+#             if contact_name == contact['name']:
+#                 is_found = False
+#                 check1 = input(
+#                     "Contact's name is exist. Are you editing or creating a contact? edit_contact/add_contact: ")
+#                 if check1 == 'edit_contact':
+#                     # edit_contact()
+#                     print("Contact has been edited")
+#                 elif check1 == 'add_contact':
+#                     # edit_contact()
+#                     print("Contact has been added")
 
-        if os.stat(FILE_NAME).st_size == 0:  # Проверяем пустой список или нет
-            return print('empty')
-        load_data = load_note(FILE_NAME)
-
-        for contact in load_data:
-            if contact_name == contact['name']:
-                is_found = False
-                check1 = input(
-                    "Contact's name is exist. Are you editing or creating a contact? edit_contact/add_contact: ")
-                if check1 == 'edit_contact':
-                    # edit_contact()
-                    print("Contact has been edited")
-                elif check1 == 'add_contact':
-                    # edit_contact()
-                    print("Contact has been added")
-
-        if is_found:
-            print(f"Contact {contact_name} not found")
-
-    except FileNotFoundError:
-        print("File not found")
+#     if is_found:
+#         print(f"Contact {contact_name} not found")
+#
+# except FileNotFoundError:
+#     print("File not found")
 
 
 def close_birthday_users(users, start, end) -> list:
@@ -278,3 +279,102 @@ def show_birthdays(contacts=CONTACTS) -> str:
                     result += f'{v[0]}\n'
         result += '\n'
     return result
+
+
+def search_contact():
+    """Функция поиска контакта по имени"""
+    result = ''
+    name_for_search = input("Введите имя.\n>>> ")
+    for contact in CONTACTS:
+        if contact["name"] == name_for_search:
+            for k, v in contact.items():
+                if not isinstance(v, list):
+                    result += f'{v}\n'
+                else:
+                    if len(v) != 1:
+                        result += f'{", ".join(v)}\n'
+                    else:
+                        result += f'{v[0]}\n'
+            result += '\n'
+            return result
+    return
+
+
+# # 2. Если запись не найдена - можно, ввести еще раз или отменить выполнение функции.
+# def search_contact_cycle(unpacked_contacts):
+#     # Функциия принимает распакованный список контактов и возвращает искомый контакт (по ключу "name") или None, если человек выбрал прекратить поиск.
+#     while True:
+#         search_for_name = input("Введите имя контакта для изменения и Enter, чтобы прекратить нажмите только Enter: ")
+#         pos_in_list = 0
+#         if search_for_name == "":
+#             return
+#         for contact in unpacked_contacts:
+#             if contact["name"] == search_for_name:
+#                 return [contact, pos_in_list]
+#             pos_in_list += 1
+#         print("Контакт с таким именем не найден.")
+
+
+# 3. Пользователю выводиться все поля контакта, и спрашиваеться, которое он хочет изменить.
+# 4. Вызываеться функция изменения данного параметра
+# 5. Спрашиваеться, нужно ли изменить что то еще
+# 6. Если нужно изменить что то еще - начинаеться пунки 3.
+def change_contact():
+    """Функция изменения контакта"""
+    # contact = search_contact()
+    # Принимает на вход контакт, найденный функцией search_contact_cycle,
+    # печатает поля контакта, и спрашивает, который нужно изменить.
+
+    count = 0  # Эта часть кода отображает содержание контакта с нумерацией полей словаря
+    name_for_search = str(input("Введите имя.\n>>> "))
+    old_contact = None
+    for contact in CONTACTS:
+        # Проверка на предмет наличия контакта в списке контактов
+        if contact["name"] == name_for_search:
+            old_contact = contact
+            # Вывод перечня полей для контакта
+            for key, value in contact.items():
+                count += 1
+                print(f"{count}. {key.title()}: {value}")
+            #  Просьба ввести номер параметра, который нужно изменить, с последующим изменением
+            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter',"
+                                   " либо просто 'Enter' - что бы отменить редактирование.\n>>> ")
+            if i_wanna_change == "1":
+                contact["name"] = input("Введите новое имя контакта.\n>>> ")
+            elif i_wanna_change == "2":
+                contact["birthday"] = wanna_enter_birthday()
+            elif i_wanna_change == "3":
+                contact["email"] = wanna_enter_email()
+            elif i_wanna_change == "4":
+                def wanna_add_or_change_phone():
+                    """Вложенная функция изменения телефона контакта"""
+                    # Возвращает новый список телеофонов для этого контакта
+                    # Отображение всех телефонов контакта с порядковым номером
+                    count_phone = 0
+                    for phones in contact["phones"]:
+                        count_phone += 1
+                        print(f"{count_phone}. {phones}")
+                    answer = input(
+                        "Если хотите добавить новый телефон - введите его,"
+                        "если же хотите изменить существующий - введите его порядковый номер.\n>>> ")
+                    if len(answer) <= 2:  # проверка что ввел порядковый номер
+                        contact["phones"][
+                            int(answer) - 1] = input_phone()  # Заменяет телефон в списке
+                    else:
+                        contact["phones"].append(
+                            input_phone)  # если ввел не порядковый номер, то предполагаем, телефон.
+                    return contact["phones"]
+                contact["phones"] = wanna_add_or_change_phone()
+            elif i_wanna_change == "5":
+                contact["address"] = str(input("Введите новый адресс контакта.\n>>> "))
+            elif i_wanna_change == "":
+                return "Вы завершили редактирование контакта. Никаких изменений не произошло."
+
+            def wanna_change_smth_else():
+                """Вложенная функция запроса на измениня каких-либо других полей"""
+                answer = str(input("Изменения внесены. Если Хотите изменить что-то еще - введите любой символ и"
+                                   "нажмите 'Enter', чтобы выйти - просто нажмите 'Enter'."))
+                if answer:
+                    return change_contact()
+            wanna_change_smth_else()
+    return f'Контакт с именем: {name_for_search}, отсутствует в записной книжке.'

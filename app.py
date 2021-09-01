@@ -1,7 +1,9 @@
 import logging
 import json
 from clean import main
-from address_book import add_contact, delete_contact, CONTACTS, dump_note, show_contacts, show_birthdays
+from address_book import *
+# from address_book import CONTACTS, add_contact, delete_contact, change_contact, search_contact, show_contacts
+
 
 
 # Config logging
@@ -38,8 +40,8 @@ def unknown_cmd():
 
 COMMAND = {'add_contact': add_contact,
            'delete_contact': delete_contact,
-           'change_contact': '',
-           'search_contact': '',
+           'change_contact': change_contact,
+           'search_contact': search_contact,
            'show_contacts': show_contacts,
            'show_birthdays': show_birthdays,
            'add_note': '',
@@ -55,7 +57,7 @@ def main():
     print(f'Список команд: {[i for i in COMMAND.keys()]}')
     while True:
         user_input = input('Input your command: ')
-        command = user_input.lower()
+        command = user_input.lower().strip()
         handler = COMMAND.get(command.lower(), unknown_cmd)
         result = handler()
         if not result:
