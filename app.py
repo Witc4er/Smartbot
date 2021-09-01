@@ -2,6 +2,7 @@ import logging
 import json
 from clean import main
 from address_book import *
+from note import *
 # from address_book import CONTACTS, add_contact, delete_contact, change_contact, search_contact, show_contacts
 
 
@@ -28,9 +29,11 @@ def sort_folder():
 
 
 def exit_handler():
-    print(CONTACTS)
-    print('Bye!')
-    dump_note(CONTACTS)
+    # print(CONTACTS)
+    # print('Bye!')
+    dump_note(ADDRESS_BOOK_FILE, CONTACTS)
+    dump_note(NOTE_FILE, NOTE)
+    return
 
 
 @handle_info
@@ -44,8 +47,8 @@ COMMAND = {'add_contact': add_contact,
            'search_contact': search_contact,
            'show_contacts': show_contacts,
            'show_birthdays': show_birthdays,
-           'add_note': '',
-           'delete_note': '',
+           'add_note': add_note,
+           'delete_note': delete_note,
            'change_note': '',
            'search_note': '',
            'show_notes': '',
@@ -62,6 +65,7 @@ def main():
         result = handler()
         if not result:
             exit_handler()
+            print('Bye')
             break
         print(result)
 

@@ -1,7 +1,7 @@
 import json
 
 
-# file_name - файл с заметками
+# NOTE_FILE - файл с заметками
 
 def find_note(file_name):
     try:

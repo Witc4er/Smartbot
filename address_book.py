@@ -4,18 +4,18 @@ import json
 import os
 from datetime import datetime, date, timedelta
 
-WEEKDAYS = ("\nMonday", "\nTuesday", "\nWednesday", "\nThursday", "\nFriday")
-FILE_NAME = 'test.json'
+
+ADDRESS_BOOK_FILE = 'address_book.json'
 
 
-def dump_note(new_data):
-    # Функция записи данных в файл
-    with open(FILE_NAME, 'w') as fh:
+def dump_note(path_file, new_data):
+    """Функция записи данных в файл"""
+    with open(path_file, 'w') as fh:
         json.dump(new_data, fh)
 
 
 def load_note(path_file):
-    # Функция чтения данных из файла
+    """Функция чтения данных из файла"""
     try:
         with open(path_file, 'r') as fh:
             return json.load(fh)
@@ -25,7 +25,7 @@ def load_note(path_file):
         return list()
 
 
-CONTACTS = load_note(FILE_NAME)
+CONTACTS = load_note(ADDRESS_BOOK_FILE)
 
 
 def sanitize_n_check_phone(phone):
@@ -197,26 +197,30 @@ def delete_contact() -> str:
 def show_contacts() -> str:
     # Функция вывода всех контактов
     result = ''
-    for contact in CONTACTS:
-        for k, v in contact.items():
-            if not isinstance(v, list):
-                result += f'{k.title()}: {v}\n'
-            else:
-                if len(v) != 1:
-                    result += f'{k.title()}: {", ".join(v)}\n'
+    if CONTACTS:
+        for contact in CONTACTS:
+            for k, v in contact.items():
+                if not isinstance(v, list):
+                    result += f'{k.title()}: {v}\n'
                 else:
-                    result += f'{k.title()}: {v[0]}\n'
-        result += '\n'
-    return result
+                    if len(v) != 1:
+                        result += f'{k.title()}: {", ".join(v)}\n'
+                    else:
+                        result += f'{k.title()}: {v[0]}\n'
+            result += '\n'
+        return result
+    else:
+        result = 'Нет записанных контактов.'
+        return result
 
 
 # def is_exist_name_contact(contact_name):
 #     try:
 #         is_found = True
 #
-#         if os.stat(FILE_NAME).st_size == 0:  # Проверяем пустой список или нет
+#         if os.stat(ADDRESS_BOOK_FILE).st_size == 0:  # Проверяем пустой список или нет
 #             return print('empty')
-#         load_data = load_note(FILE_NAME)
+#         load_data = load_note(ADDRESS_BOOK_FILE)
 #
 #         for contact in load_data:
 #             if contact_name == contact['name']:

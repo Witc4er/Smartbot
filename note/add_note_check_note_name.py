@@ -2,8 +2,8 @@ import json
 import re
 
 
-#Нужно прописать путь к file_name с заметками
-file_name = 'test.json'
+#Нужно прописать путь к NOTE_FILE с заметками
+NOTE_FILE = 'test.json'
 
 
 def add_note(file_name):
@@ -38,4 +38,4 @@ def check_note_name(note_data, input_note_name):
                 pass
             #Если юзер выбирает создать заметку - перезапускаем ф-цию add_note сначала
             elif check1 == 'add_note':
-                add_note(file_name)
+                add_note(NOTE_FILE)
