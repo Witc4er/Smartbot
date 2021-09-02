@@ -112,13 +112,9 @@ def handle_folder(path: pathlib.Path):
         pass
 
 
-def main(path):
-    try:
-        folder = pathlib.Path(path)
-        print(f'Start in folder: "{folder}"')
-        scan(folder)
-    except (IndexError, TypeError):
-        print('Вы не передали путь при вызове скрипта. Попробуйте еще раз.')
+def sort_folder(path):
+    folder = pathlib.Path(path)
+    print(f'Start in folder: "{folder}"')
 
     for file in IMAGES:
         handle_image(file, folder)

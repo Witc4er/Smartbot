@@ -275,13 +275,15 @@ def show_birthdays(contacts=CONTACTS) -> str:
     for birthday in birthday_users:
         for k, v in birthday.items():
             if not isinstance(v, list):
-                result += f'{v}\n'
+                result += f'{k.title()}: {v}\n'
             else:
                 if len(v) != 1:
-                    result += f'{", ".join(v)}\n'
+                    result += f'{k.title()}: {", ".join(v)}\n'
                 else:
-                    result += f'{v[0]}\n'
+                    result += f'{k.title()}: {v[0]}\n'
         result += '\n'
+    if not result:
+        return 'Ближайшие семь дней среди Ваших контактов именинников нет.'
     return result
 
 
@@ -380,5 +382,6 @@ def change_contact():
                 contact["email"] = wanna_enter_email()
             elif i_wanna_change == "":
                 return "Вы завершили редактирование контакта. Никаких изменений не произошло."
+            return f'Изменения успешно сохранены'
 
         # return f'Контакт с именем: {name_for_search}, отсутствует в записной книжке.'

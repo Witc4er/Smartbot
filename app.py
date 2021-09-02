@@ -1,9 +1,9 @@
 import logging
 import json
-from clean import main
+from clean import *
 from address_book import *
 from note import *
-# from address_book import CONTACTS, add_contact, delete_contact, change_contact, search_contact, show_contacts
+from fuzzywuzzy import fuzz
 
 
 
@@ -23,9 +23,12 @@ def handle_info(func):
 
 
 def sort_folder():
-    path = input('Укажите папку для сортировки: ')
-    main(path)
-    return f'Сортировка окончена.'
+    path = input('Введите путь для сортировки.\n>>> ')
+    try:
+        result = sort_folder(path)
+        return 'Сортировка окончена'
+    except TypeError:
+        return f'Вы не передали путь при вызове скрипта. Попробуйте еще раз.'
 
 
 def exit_handler():
@@ -38,7 +41,7 @@ def exit_handler():
 
 @handle_info
 def unknown_cmd():
-    return "Unknown command."
+    return f"Простите, команда не распознана.\nПовторите попытку."
 
 
 COMMAND = {'add_contact': add_contact,
@@ -56,12 +59,32 @@ COMMAND = {'add_contact': add_contact,
            'exit': exit_handler}
 
 
+def command_analyzer(input_command):
+    """Функция, которая занимается анализом введенных команд"""
+    possible_cmd = []
+    for key, value in COMMAND.items():
+        if fuzz.ratio(key, input_command) == 100:
+            return value
+        elif 72 < fuzz.ratio(key, input_command) < 100:
+            print(f"Похоже, вы имели ввиду команду: {key}")
+            return value
+        elif 40 <= fuzz.ratio(key, input_command) <= 70:
+            possible_cmd.append(key)
+
+    if len(possible_cmd) > 0:
+        pos_cmd = ", ".join(possible_cmd)
+        return f"К сожалению, команда не распознана. Вероятно, вы имели ввиду что-то из этого: {pos_cmd}\n" \
+               f"Попробуйте ввести команду еще раз."
+    else:
+        return unknown_cmd
+
+
 def main():
     print(f'Список команд: {[i for i in COMMAND.keys()]}')
     while True:
         user_input = input('Input your command: ')
         command = user_input.lower().strip()
-        handler = COMMAND.get(command.lower(), unknown_cmd)
+        handler = command_analyzer(command)
         result = handler()
         if not result:
             exit_handler()
