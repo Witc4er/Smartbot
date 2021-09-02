@@ -286,7 +286,7 @@ def show_birthdays(contacts=CONTACTS) -> str:
                     result += f'{k.title()}: {v[0]}\n'
         result += '\n'
     if not result:
-        return 'Ближайшие семь дней среди Ваших контактов именинников нет.'
+        return 'В течении текущей рабочей недели среди Ваших контактов именинников нет.'
     return result
 
 

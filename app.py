@@ -31,15 +31,22 @@ def sort_folder():
 
 
 def exit_handler():
-    # print(CONTACTS)
-    # print('Bye!')
+    """Функция выхода из бота"""
     dump_note(ADDRESS_BOOK_FILE, CONTACTS)
     dump_note(NOTE_FILE, NOTE)
     return
 
 
+def possible_cmd():
+    """Функция вывода сообщения если неверно указана команда"""
+    return f'К сожалению, команда не распознана. Вероятно, вы имели ввиду что-то из этого: {", ".join(psb_cmd)}\n' \
+           f"Попробуйте ввести команду еще раз."
+
+
 def unknown_cmd():
-    return f"Простите, команда не распознана.\nПовторите попытку."
+    """Функция вывода сообщения если введена неизвестная команда"""
+    return f'К сожалению, команда не распознана.' \
+           f"Попробуйте ввести команду еще раз."
 
 
 COMMAND = {'add_contact': add_contact,
@@ -57,22 +64,21 @@ COMMAND = {'add_contact': add_contact,
            'exit': exit_handler}
 
 
+# Список вероятных команд
+psb_cmd = []
+
 def command_analyzer(input_command):
     """Функция, которая занимается анализом введенных команд"""
-    possible_cmd = []
     for key, value in COMMAND.items():
         if fuzz.ratio(key, input_command) == 100:
             return value
-        elif 72 < fuzz.ratio(key, input_command) < 100:
+        elif 80 < fuzz.ratio(key, input_command) < 100:
             print(f"Похоже, вы имели ввиду команду: {key}")
             return value
-        elif 40 <= fuzz.ratio(key, input_command) <= 70:
-            possible_cmd.append(key)
-
-    if len(possible_cmd) > 0:
-        pos_cmd = ", ".join(possible_cmd)
-        return f"К сожалению, команда не распознана. Вероятно, вы имели ввиду что-то из этого: {pos_cmd}\n" \
-               f"Попробуйте ввести команду еще раз."
+        elif 40 <= fuzz.ratio(key, input_command) <= 80:
+            psb_cmd.append(key)
+    if len(psb_cmd) > 0:
+        return possible_cmd
     else:
         return unknown_cmd
 
@@ -83,6 +89,7 @@ def main():
         user_input = input('Input your command: ')
         command = user_input.lower().strip()
         handler = command_analyzer(command)
+        logger.info(handler)
         result = handler()
         if not result:
             exit_handler()
