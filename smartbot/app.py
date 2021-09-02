@@ -89,7 +89,6 @@ def main():
         user_input = input('Input your command: ')
         command = user_input.lower().strip()
         handler = command_analyzer(command)
-        logger.info(handler)
         result = handler()
         if not result:
             exit_handler()
