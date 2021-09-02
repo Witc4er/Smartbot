@@ -1,5 +1,5 @@
 import logging
-from clean import *
+from sort_folder import *
 from address_book import *
 from note import *
 from fuzzywuzzy import fuzz
