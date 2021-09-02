@@ -217,33 +217,6 @@ def show_contacts() -> str:
         return result
 
 
-# def is_exist_name_contact(contact_name):
-#     try:
-#         is_found = True
-#
-#         if os.stat(ADDRESS_BOOK_FILE).st_size == 0:  # Проверяем пустой список или нет
-#             return print('empty')
-#         load_data = load_note(ADDRESS_BOOK_FILE)
-#
-#         for contact in load_data:
-#             if contact_name == contact['name']:
-#                 is_found = False
-#                 check1 = input(
-#                     "Contact's name is exist. Are you editing or creating a contact? edit_contact/add_contact: ")
-#                 if check1 == 'edit_contact':
-#                     # edit_contact()
-#                     print("Contact has been edited")
-#                 elif check1 == 'add_contact':
-#                     # edit_contact()
-#                     print("Contact has been added")
-
-#     if is_found:
-#         print(f"Contact {contact_name} not found")
-#
-# except FileNotFoundError:
-#     print("File not found")
-
-
 def close_birthday_users(users, start, end) -> list:
     # Функция выборки ближайших дней рождения
     now = datetime.today().date()
@@ -309,21 +282,6 @@ def find_contact():
     return
 
 
-# # 2. Если запись не найдена - можно, ввести еще раз или отменить выполнение функции.
-# def search_contact_cycle():
-#     # Функциия принимает распакованный список контактов и возвращает искомый контакт (по ключу "name") или None, если человек выбрал прекратить поиск.
-#     while True:
-#         search_for_name = str(input("Введите имя контакта , чтобы прекратить нажмите только Enter: "))
-#         pos_in_list = 0
-#         if search_for_name == "":
-#             return
-#         for contact in CONTACTS:
-#             if contact["name"] == search_for_name:
-#                 return [contact]
-#             pos_in_list += 1
-#         print("Контакт с таким именем не найден.")
-
-
 def wanna_change_smth_else():
     """Вложенная функция запроса на измениня каких-либо других полей"""
     answer = str(input("Изменения внесены. Если Хотите изменить что-то еще - введите любой символ и "
@@ -386,5 +344,3 @@ def change_contact():
             elif i_wanna_change == "":
                 return "Вы завершили редактирование контакта. Никаких изменений не произошло."
             return f'Изменения успешно сохранены'
-
-        # return f'Контакт с именем: {name_for_search}, отсутствует в записной книжке.'
