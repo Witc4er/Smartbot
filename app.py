@@ -49,9 +49,9 @@ COMMAND = {'add_contact': add_contact,
            'show_birthdays': show_birthdays,
            'add_note': add_note,
            'delete_note': delete_note,
-           'change_note': '',
-           'search_note': '',
-           'show_notes': '',
+           'change_note': change_note,
+           'search_note': search_note,
+           'show_notes': show_notes,
            'sort_folder': sort_folder,
            'exit': exit_handler}
 

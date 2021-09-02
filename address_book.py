@@ -4,8 +4,8 @@ import json
 import os
 from datetime import datetime, date, timedelta
 
-
-ADDRESS_BOOK_FILE = 'address_book.json'
+# Пусть к файлу с контактами
+ADDRESS_BOOK_FILE = 'files/address_book.json'
 
 
 def dump_note(path_file, new_data):
@@ -24,7 +24,7 @@ def load_note(path_file):
     except Exception:
         return list()
 
-
+# Пусть к файлу с контактами
 CONTACTS = load_note(ADDRESS_BOOK_FILE)
 
 
@@ -348,8 +348,8 @@ def change_contact():
                 count += 1
                 print(f"{count}. {key.title()}: {value}")
             #  Просьба ввести номер параметра, который нужно изменить, с последующим изменением
-            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter',\n"
-                                   "чтобы выйти - просто нажмите 'Enter'.\n>>> ")
+            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter'.\n"
+                                   "Чтобы выйти - просто нажмите 'Enter'.\n>>> ")
             if i_wanna_change == "1":
                 contact["name"] = input("Введите новое имя контакта.\n>>> ")
             elif i_wanna_change == "2":
