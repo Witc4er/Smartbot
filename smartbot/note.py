@@ -6,7 +6,7 @@ from pathlib import Path
 # Путь к файлу с заметками
 FILES = Path() / 'files'
 FILES.mkdir(exist_ok=True)
-NOTE_FILE = 'files/note.json'
+NOTE_FILE = '../files/note.json'
 # Заметки
 NOTE = load_note(NOTE_FILE)
 

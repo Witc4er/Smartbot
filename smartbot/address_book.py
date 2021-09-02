@@ -8,7 +8,7 @@ from pathlib import Path
 # Пусть к файлу с контактами
 FILES = Path() / 'files'
 FILES.mkdir(exist_ok=True)
-ADDRESS_BOOK_FILE = 'files/address_book.json'
+ADDRESS_BOOK_FILE = '../files/address_book.json'
 
 
 def dump_note(path_file, new_data):
