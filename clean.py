@@ -2,6 +2,7 @@ import re
 import sys
 import pathlib
 import shutil
+from app import logger
 
 IMAGES = []
 AUDIO = []
@@ -113,6 +114,7 @@ def handle_folder(path: pathlib.Path):
 
 
 def sort_folder(path):
+    logger.info(f'Вызвана функция sort_folder с аргументом: {path}')
     folder = pathlib.Path(path)
     print(f'Start in folder: "{folder}"')
 

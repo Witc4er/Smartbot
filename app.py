@@ -1,5 +1,4 @@
 import logging
-import json
 from clean import *
 from address_book import *
 from note import *
@@ -39,7 +38,6 @@ def exit_handler():
     return
 
 
-@handle_info
 def unknown_cmd():
     return f"Простите, команда не распознана.\nПовторите попытку."
 
@@ -47,13 +45,13 @@ def unknown_cmd():
 COMMAND = {'add_contact': add_contact,
            'delete_contact': delete_contact,
            'change_contact': change_contact,
-           'search_contact': search_contact,
+           'find_contact': find_contact,
            'show_contacts': show_contacts,
            'show_birthdays': show_birthdays,
            'add_note': add_note,
            'delete_note': delete_note,
            'change_note': change_note,
-           'search_note': search_note,
+           'find_note': find_note,
            'show_notes': show_notes,
            'sort_folder': sort_folder,
            'exit': exit_handler}

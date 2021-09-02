@@ -1,8 +1,11 @@
 import json
 import re
-from address_book import load_note, dump_note
+from address_book import load_note
+from pathlib import Path
 
 # Путь к файлу с заметками
+FILES = Path() / 'files'
+FILES.mkdir(exist_ok=True)
 NOTE_FILE = 'files/note.json'
 # Заметки
 NOTE = load_note(NOTE_FILE)
@@ -116,7 +119,7 @@ def show_notes() -> str:
         return result
 
 
-def search_note():
+def find_note():
     """Функция поиска заметок по заголовку и тегу"""
     search_value = input('Пожалуйста, введите имя или тег заметки для поиска.\n>>> ')
     # Счетчик для определения, найден результат запроса, или нет
