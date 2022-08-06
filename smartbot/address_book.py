@@ -13,7 +13,7 @@ engine = create_engine('sqlite:///smartbot.db')
 Session = sessionmaker(bind=engine)
 session = Session()
 
-CONTACTS = None
+
 
 
 
