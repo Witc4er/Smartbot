@@ -1,14 +1,20 @@
 # ФУНКЦИИ ДЛЯ ОБРАБОТКИ ТЕЛЕФОНА
 import re
 import json
-import os
-from datetime import datetime, date, timedelta
-from pathlib import Path
+from datetime import datetime, timedelta
+from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import NoResultFound
+from model import AddressBook
 
-# Пусть к файлу с контактами
-FILES = Path() / 'files'
-FILES.mkdir(exist_ok=True)
-ADDRESS_BOOK_FILE = './files/address_book.json'
+
+
+engine = create_engine('sqlite:///smartbot.db')
+Session = sessionmaker(bind=engine)
+session = Session()
+
+CONTACTS = None
+
 
 
 def dump_note(path_file, new_data):
@@ -26,9 +32,6 @@ def load_note(path_file):
         return list()
     except Exception:
         return list()
-
-# Пусть к файлу с контактами
-CONTACTS = load_note(ADDRESS_BOOK_FILE)
 
 
 def sanitize_n_check_phone(phone):
@@ -178,7 +181,15 @@ def add_contact() -> str:
     result["address"] = wanna_enter_address()
     result["phones"] = add_some_phones()
     result["email"] = wanna_enter_email()
-    CONTACTS.append(result)
+    data_to_insert = AddressBook(
+        name=result["name"],
+        birthday=datetime.strptime(result["birthday"], '%d.%m.%Y'),
+        address=result["address"],
+        phone=','.join(result["phones"]),
+        email=result["email"]
+    )
+    session.add(data_to_insert)
+    session.commit()
     return f'В записную книжку добавлена запись.\n' \
            f'Имя: {result["name"]}\n' \
            f'Дата рождения: {result["birthday"]}\n' \
@@ -190,96 +201,36 @@ def add_contact() -> str:
 def delete_contact() -> str:
     # Функция удаления контакта
     contact_name = input("Введите имя контакта для удаления: ")
-    for contact in CONTACTS:
-        if contact_name == contact['name']:
-            CONTACTS.pop(CONTACTS.index(contact))
-            return f"Контакт с именем: {contact_name}, успешно удален"
-        return f'Контакт с именем: {contact_name}, в списке не найден'
+    try:
+        i = session.query(AddressBook).filter(AddressBook.name == contact_name).one()
+        session.delete(i)
+        session.commit()
+        return f"Контакт с именем: {contact_name}, успешно удален."
+    except NoResultFound:
+        return f'Контакт с именем: {contact_name}, в базе не найден.'
 
 
 def show_contacts() -> str:
     # Функция вывода всех контактов
-    result = ''
-    if CONTACTS:
-        for contact in CONTACTS:
-            for k, v in contact.items():
-                if not isinstance(v, list):
-                    result += f'{k.title()}: {v}\n'
-                else:
-                    if len(v) != 1:
-                        result += f'{k.title()}: {", ".join(v)}\n'
-                    else:
-                        result += f'{k.title()}: {v[0]}\n'
-            result += '\n'
-        return result
+    contacts = session.query(AddressBook).all()
+    if contacts:
+        for i in contacts:
+            print(i)
+        return '----' * 10
     else:
         result = 'Нет записанных контактов.'
         return result
 
 
-def close_birthday_users(users, start, end) -> list:
-    # Функция выборки ближайших дней рождения
-    now = datetime.today().date()
-    result = []
-    for user in users:
-        try:
-            birthday = datetime.strptime(user['birthday'], '%d.%m.%Y').date()
-            birthday = birthday.replace(year=now.year)
-        except TypeError:
-            continue
-        if start <= birthday <= end:
-            result.append(user)
-    return result
-
-
-def show_birthdays(contacts=CONTACTS) -> str:
-    # Функция выводы ближайших дней рождения контактов
-    result = ''
-    now = datetime.today().date()
-    current_week_day = now.weekday()
-    if current_week_day >= 5:
-        start_date = now - timedelta(days=(7 - current_week_day))
-    elif current_week_day == 0:
-        start_date = now - timedelta(days=2)
-    else:
-        start_date = now
-    days_ahead = 4 - current_week_day
-    if days_ahead < 0:
-        days_ahead += 7
-    end_date = now + timedelta(days=days_ahead)
-    birthday_users = close_birthday_users(contacts, start=start_date, end=end_date)
-    for birthday in birthday_users:
-        for k, v in birthday.items():
-            if not isinstance(v, list):
-                result += f'{k.title()}: {v}\n'
-            else:
-                if len(v) != 1:
-                    result += f'{k.title()}: {", ".join(v)}\n'
-                else:
-                    result += f'{k.title()}: {v[0]}\n'
-        result += '\n'
-    if not result:
-        return 'В течении текущей рабочей недели среди Ваших контактов именинников нет.'
-    return result
-
-
 def find_contact():
     """Функция поиска контакта по имени"""
-    result = ''
     name_for_search = input("Введите имя.\n>>> ")
-    for contact in CONTACTS:
-        if contact["name"] == name_for_search:
-            for k, v in contact.items():
-                if not isinstance(v, list):
-                    result += f'{v}\n'
-                else:
-                    if len(v) != 1:
-                        result += f'{", ".join(v)}\n'
-                    else:
-                        result += f'{v[0]}\n'
-            result += '\n'
-            return result
-    return
+    try:
+        contact = session.query(AddressBook).filter(AddressBook.name == name_for_search).one()
+        return contact
+    except NoResultFound:
+        return f'Контакт с именем: {name_for_search}, в базе не найден.'
+
 
 
 def wanna_change_smth_else():
@@ -295,52 +246,35 @@ def wanna_change_smth_else():
 # 4. Вызываеться функция изменения данного параметра
 # 5. Спрашиваеться, нужно ли изменить что то еще
 # 6. Если нужно изменить что то еще - начинаеться пунки 3.
+
+
 def change_contact():
     """Функция изменения контакта"""
-    # contact = search_contact()
-    # Принимает на вход контакт, найденный функцией search_contact_cycle,
-    # печатает поля контакта, и спрашивает, который нужно изменить.
-
-    count = 0  # Эта часть кода отображает содержание контакта с нумерацией полей словаря
     name_for_search = str(input("Введите имя.\n>>> ")).strip()
-    for contact in CONTACTS:
-        # Проверка на предмет наличия контакта в списке контактов
-        if contact["name"] == name_for_search:
-            # Вывод перечня полей для контакта
-            for key, value in contact.items():
-                count += 1
-                print(f"{count}. {key.title()}: {value}")
-            #  Просьба ввести номер параметра, который нужно изменить, с последующим изменением
-            i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter'.\n"
+    try:
+        contact = session.query(AddressBook).filter(AddressBook.name == name_for_search).one()
+        print(contact)
+        i_wanna_change = input("\nВведите цифру поля, которое хотите отредактировать и нажмите 'Enter'.\n"
+                               "Чтобы выйти - просто нажмите 'Enter'.\n>>> ")
+        if i_wanna_change == "1":
+            i_wanna_change = input("\nПоле 'Id' невозможно отредактировать.\n"
+                                   "Введите цифру поля, которое хотите отредактировать и нажмите 'Enter'.\n"
                                    "Чтобы выйти - просто нажмите 'Enter'.\n>>> ")
-            if i_wanna_change == "1":
-                contact["name"] = input("Введите новое имя контакта.\n>>> ")
-            elif i_wanna_change == "2":
-                contact["birthday"] = wanna_enter_birthday()
-            elif i_wanna_change == "3":
-                contact["address"] = str(input("Введите новый адресс контакта.\n>>> "))
-            elif i_wanna_change == "4":
-                def wanna_add_or_change_phone():
-                    """Вложенная функция изменения телефона контакта"""
-                    # Возвращает новый список телеофонов для этого контакта
-                    # Отображение всех телефонов контакта с порядковым номером
-                    count_phone = 0
-                    for phones in contact["phones"]:
-                        count_phone += 1
-                        print(f"{count_phone}. {phones}")
-                    answer = input(
-                        "Если хотите добавить новый телефон - просто введите его,"
-                        "если же хотите изменить существующий - введите его порядковый номер,"
-                        "после чего укажите новый мобильный телефон.\n>>> ")
-                    if len(answer) <= 2:  # проверка что ввел порядковый номер
-                        contact["phones"][int(answer) - 1] = input_phone()  # Заменяет телефон в списке
-                    else:
-                        contact["phones"].append(input_phone)  # если ввел не порядковый номер, то предполагаем, телефо
-                    return contact["phones"]
+        if i_wanna_change == "2":
+            contact.name = input("Введите новое имя контакта.\n>>> ")
+        elif i_wanna_change == "3":
+            contact.birthday = wanna_enter_birthday()
+        elif i_wanna_change == "4":
+            contact.address = str(input("Введите новый адресс контакта.\n>>> "))
+        elif i_wanna_change == "5":
+            contact.email = wanna_enter_email()
+        elif i_wanna_change == "6":
+            contact.phone = ','.join(add_some_phones())
 
-                contact["phones"] = wanna_add_or_change_phone()
-            elif i_wanna_change == "5":
-                contact["email"] = wanna_enter_email()
-            elif i_wanna_change == "":
-                return "Вы завершили редактирование контакта. Никаких изменений не произошло."
-            return f'Изменения успешно сохранены'
+        else:
+            return "Вы завершили редактирование контакта. Никаких изменений не произошло."
+        session.add(contact)
+        session.commit()
+        return f'Изменения успешно сохранены.'
+    except NoResultFound:
+        return f'Контакта с именем: {name_for_search}, в базе нет.'

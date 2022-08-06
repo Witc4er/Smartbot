@@ -32,8 +32,6 @@ def sort_folder():
 
 def exit_handler():
     """Функция выхода из бота"""
-    dump_note(ADDRESS_BOOK_FILE, CONTACTS)
-    dump_note(NOTE_FILE, NOTE)
     return
 
 
@@ -54,7 +52,6 @@ COMMAND = {'add_contact': add_contact,
            'change_contact': change_contact,
            'find_contact': find_contact,
            'show_contacts': show_contacts,
-           'show_birthdays': show_birthdays,
            'add_note': add_note,
            'delete_note': delete_note,
            'change_note': change_note,
