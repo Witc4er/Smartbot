@@ -1,37 +1,15 @@
 # ФУНКЦИИ ДЛЯ ОБРАБОТКИ ТЕЛЕФОНА
 import re
-import json
 from datetime import datetime, timedelta
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import NoResultFound
-from model import AddressBook
-
+from databases.sql_models import AddressBook
 
 
 engine = create_engine('sqlite:///smartbot.db')
 Session = sessionmaker(bind=engine)
 session = Session()
-
-
-
-
-
-def dump_note(path_file, new_data):
-    """Функция записи данных в файл"""
-    with open(path_file, 'w') as fh:
-        json.dump(new_data, fh)
-
-
-def load_note(path_file):
-    """Функция чтения данных из файла"""
-    try:
-        with open(path_file, 'r') as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        return list()
-    except Exception:
-        return list()
 
 
 def sanitize_n_check_phone(phone):

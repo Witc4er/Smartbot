@@ -1,7 +1,7 @@
 import logging
-from sort_file import *
-from address_book import *
-from note import *
+from smartbot.sort_file import *
+from smartbot.address_book import *
+from smartbot.note import *
 from fuzzywuzzy import fuzz
 
 
