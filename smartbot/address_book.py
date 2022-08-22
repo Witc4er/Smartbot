@@ -133,17 +133,37 @@ def wanna_enter_email():
     # Функция ничего не принимает, возвращает либо валидное значение емейла, либо None
     # Функция дает возможность ввести эмейл или перейти дальше. В случае ошибки так же предложит пропустить или
     # попробовать заново.
-
     answer = input("Введите Email человека и нажмите 'Enter'.\n"
                    "Чтобы пропустить - нажмите 'Enter'.\n>>> ")
     if answer == "":
         return None
     else:
-        if is_email_correct(answer):
-            return is_email_correct(answer)
+        check_email = is_email_correct(answer)
+        if check_email:
+            return check_email
         else:
             print("Вы ввели недействительный email.\nПопробуйте еще раз.")
             return wanna_enter_email()
+
+
+def add_some_emails():
+    list_emails = []
+    first_mail = wanna_enter_email()
+    if first_mail:
+        list_emails.append(first_mail)
+    while True:
+        answer = input("Если хотите добавит еще один номер - введите его.\n"
+                       "Если хотите продолжить - нажмите 'Enter'.\n>>> ")
+        if answer == "":
+            break
+        else:
+            check_email = is_email_correct(answer)
+            if check_email:
+                list_emails.append(check_email)
+            else:
+                print("Вы ввели недействительный email.\nПопробуйте еще раз.")
+                return wanna_enter_email()
+    return list_emails
 
 
 def is_date_correct(date):
@@ -179,13 +199,13 @@ def add_contact() -> str:
     result["name"] = input("Введите имя контакта: ")
     result["birthday"] = wanna_enter_birthday()
     result["address"] = wanna_enter_address()
-    result["phones"] = add_some_phones()
-    result["email"] = wanna_enter_email()
+    result["phones"] = ';'.join(add_some_phones())
+    result["email"] = ';'.join(add_some_emails())
     data_to_insert = AddressBook(
         name=result["name"],
         birthday=datetime.strptime(result["birthday"], '%d.%m.%Y'),
         address=result["address"],
-        phone=','.join(result["phones"]),
+        phone=result["phones"],
         email=result["email"]
     )
     session.add(data_to_insert)
@@ -194,7 +214,7 @@ def add_contact() -> str:
            f'Имя: {result["name"]}\n' \
            f'Дата рождения: {result["birthday"]}\n' \
            f'Адрес проживания: {result["address"]}\n' \
-           f'Номер телефона: {", ".join(result["phones"])}\n' \
+           f'Номер телефона: {result["phones"]}\n' \
            f'Email: {result["email"]}\n'
 
 
