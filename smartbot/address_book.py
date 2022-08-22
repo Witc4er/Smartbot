@@ -94,7 +94,7 @@ def add_some_phones():
                 phones_to_add.append(sanitize_n_check_phone(answer))
             else:
                 print("Вы ввели невалидный телефон.\nПопробуйте еще раз.")
-    return phones_to_add
+    return ';'.join(phones_to_add)
 
 
 def wanna_enter_address():
@@ -163,7 +163,7 @@ def add_some_emails():
             else:
                 print("Вы ввели недействительный email.\nПопробуйте еще раз.")
                 return wanna_enter_email()
-    return list_emails
+    return ';'.join(list_emails)
 
 
 def is_date_correct(date):
@@ -287,9 +287,9 @@ def change_contact():
         elif i_wanna_change == "4":
             contact.address = str(input("Введите новый адресс контакта.\n>>> "))
         elif i_wanna_change == "5":
-            contact.email = wanna_enter_email()
+            contact.email = add_some_emails()
         elif i_wanna_change == "6":
-            contact.phone = ','.join(add_some_phones())
+            contact.phone = add_some_phones()
 
         else:
             return "Вы завершили редактирование контакта. Никаких изменений не произошло."
