@@ -177,8 +177,8 @@ def add_contact() -> str:
     result["name"] = input("Введите имя контакта: ")
     result["birthday"] = wanna_enter_birthday()
     result["address"] = wanna_enter_address()
-    result["phones"] = ';'.join(add_some_phones())
-    result["email"] = ';'.join(add_some_emails())
+    result["phones"] = add_some_phones()
+    result["email"] = add_some_emails()
     data_to_insert = AddressBook(
         name=result["name"],
         birthday=datetime.strptime(result["birthday"], '%d.%m.%Y'),

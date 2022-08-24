@@ -19,4 +19,9 @@ class Note(Document):
     created = DateTimeField(default=datetime.now())
     records = ListField(EmbeddedDocumentField(Record))
     tags = ListField(EmbeddedDocumentField(Tag))
-    meta = {'allow_inheritance': True}
+    meta = {'allow_inheritance': True,
+            'indexes': [
+                {'fields': ['$name', '$records', '$tags'],
+                 'default_language': 'russian',
+                 'weights': {'name': 10, 'records': 5, 'tags': 2}}
+            ]}
