@@ -7,3 +7,5 @@ env/
 *.bin
 *.json
 *.db
+*.ini
+alembic/
